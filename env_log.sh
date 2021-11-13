@@ -1,0 +1,49 @@
+#/bin/bash
+
+python /home/pi/env_logging/stbtnstat.py > /dev/null &
+
+sudo i2cset -y 1 0x3e 0 0x38 0x39 0x14 0x70 0x56 0x6c i
+sudo i2cset -y 1 0x3e 0 0x38 0x0d 0x01 i
+sudo i2cset -y 1 0x3e 0x40 0x4d 0x6f 0x6e 0x69 0x74 0x6f 0x72 i
+sudo i2cset -y 1 0x3e 0x00 0xc0 i
+sudo i2cset -y 1 0x3e 0x40 0x77 0x61 0x69 0x74 i
+
+while true
+do
+        BTCK=`ps -ef | grep "stbtnstat.py" | grep -v grep | wc -l` 
+        if [ ${BTCK} = 0 ]; then
+                python /home/pi/env_logging/disp_env.py > /home/pi/env_logging/`date "+%Y%m%d%H%M"`_templog.csv &
+                LOGPID=$!
+                break
+        fi
+        sleep 1
+done
+
+python /home/pi/env_logging/btnstat.py > /dev/null &
+
+while true
+do
+        BTCK=`ps -ef | grep "btnstat.py" | grep -v grep | wc -l` 
+        if [ ${BTCK} = 0 ]; then
+                sync
+                kill -INT $LOGPID
+                sleep 7
+                break
+        fi
+        sync
+        sleep 1
+done
+
+
+sudo i2cset -y 1 0x3e 0 0x38 0x39 0x14 0x70 0x56 0x6c i
+sudo i2cset -y 1 0x3e 0 0x38 0x0d 0x01 i
+sudo i2cset -y 1 0x3e 0x40 0x53 0x68 0x75 0x74 i
+sudo i2cset -y 1 0x3e 0x00 0xc0 i
+sudo i2cset -y 1 0x3e 0x40 0x44 0x6f 0x77 0x6e 0x21 0x21 i
+ 
+sleep 2
+
+sudo i2cset -y 1 0x3e 0 0x38 0x39 0x14 0x70 0x56 0x6c i
+sudo i2cset -y 1 0x3e 0 0x38 0x0d 0x01 i
+
+sudo shutdown -h now
