@@ -17,7 +17,7 @@ wiringpi.pinMode( button_pin, 0 )
 # 0Vの場合は「1」と設定する（プルダウン）
 wiringpi.pullUpDnControl( button_pin, 2 )
 
-# whileの処理は字下げをするとループの範囲になる（らしい）
+# whileの処理は字下げをするとループの範囲になる
 while True:
     # GPIO端子の状態を読み込む
 	# ボタンを押すと「0」、放すと「1」になる
